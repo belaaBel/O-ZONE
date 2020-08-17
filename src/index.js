@@ -187,11 +187,14 @@ function renderCards(data){
 
 //Работа с каталог
 function renderCatalog(){
+    
     const cards = document.querySelectorAll('.goods .card');
     const catalogBtn = document.querySelector('.catalog-button');
     const catalog = document.querySelector('.catalog');
     const catalogList = document.querySelector('.catalog-list');
     const categories = new Set();
+    const filter = document.querySelector('.filter');
+    const filterTitle = document.querySelector('.filter-title');
 
     cards.forEach(card => {
         categories.add(card.dataset.category);
@@ -202,30 +205,42 @@ function renderCatalog(){
         li.textContent = caterory;
         catalogList.appendChild(li);
     })
-    
-    catalogBtn.addEventListener('click', (event)=> {
-        const list = catalogList.getElementsByTagName('li');
 
+    catalogBtn.addEventListener('click', (event)=> {
         if(catalog.style.display){
             catalog.style.display = '';
         } else{
             catalog.style.display = 'block';
         }
 
+        const list = catalogList.querySelectorAll('li');
+
+        
         if(event.target.tagName === 'LI'){
             const li = event.target;
+            
+            filterTitle.textContent = event.target.textContent;
+
             cards.forEach(card => {
+                
                 if(card.dataset.category === li.textContent){
-                    
-                    // card.parentNode.style.display = '';
-                    // card.style.display = '';
+                    card.parentNode.style.display = '';
+                    card.style.display = '';
                 } else{
-                    card.remove();
-                    // card.parentNode.style.display = 'none';
-                    // card.style.display = 'none';
+                    card.style.display = 'none';
+                    card.parentNode.style.display = 'none';
                 }
             })
+            list.forEach(elem => {
+                //elem.classList.add('active')
+                if(elem === event.target){
+                    elem.classList.add('active')
+                } else{
+                    elem.classList.remove('active')
+                }
+            });
         }
+
         filters();
     })  
 }
