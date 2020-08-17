@@ -216,8 +216,10 @@ function renderCatalog(){
             const li = event.target;
             cards.forEach(card => {
                 if(card.dataset.category === li.textContent){
+                    card.parentNode.style.display = '';
                     card.style.display = '';
                 } else{
+                    card.parentNode.style.display = 'none';
                     card.style.display = 'none';
                 }
             })
