@@ -89,7 +89,10 @@ function filters(){
     const min = document.getElementById('min');
     const max = document.getElementById('max');
     const searchBtn = document.querySelector('.search-btn');
-
+    const catalogBtn = document.querySelector('.catalog-button');
+    const catalog = document.querySelector('.catalog');
+    const catalogList = document.querySelector('.catalog-list');
+    const filterTitle = document.querySelector('.filter-title');
 
     const filterPrice = (card) => {
         const price = parseFloat(card.querySelector('.card-price').textContent);
@@ -101,26 +104,23 @@ function filters(){
     }
     
     const filter = () => {
-        if(check.checked){
-            cards.forEach(card => {
+        cards.forEach(card => {
+            if (check.checked){
                 if(!card.querySelector('.card-sale')){
                     card.parentNode.style.display = 'none';
-                }
-                else {
+                } else{
                     filterPrice(card);
                 }
-            })
-        } else{
-            cards.forEach(card => {
-                filterPrice(card);
-            });
-        }
+            }  else{
+                card.parentNode.style.display = '';
+            }
+        })
     }
 
     check.addEventListener('click', filter);
     min.addEventListener('change', filter);
     max.addEventListener('change', filter);
-
+    
     searchBtn.addEventListener('click', () => {
         const searchText = new RegExp(document.querySelector('.search-wrapper_input').value.trim().toLowerCase(), 'i');
         cards.forEach(card => {
@@ -185,9 +185,40 @@ function renderCards(data){
 //конец
 
 
+
+const filterCategoria = (li, card) => {    
+    const check = document.getElementById('discount-checkbox');
+    let min = document.getElementById('min');
+    let max = document.getElementById('max');
+
+    const filterPrice = () => {
+        const price = parseFloat(card.querySelector('.card-price').textContent);
+        if((min.value && price < min.value) || (max.value && price > max.value)){
+            card.parentNode.style.display = 'none';
+        } else{
+            card.parentNode.style.display = '';
+        }
+    }
+    
+    const filter = () => {
+        if (check.checked){
+            if(!card.querySelector('.card-sale')){
+                card.parentNode.style.display = 'none';
+            } else{
+                filterPrice(card);
+            }
+        }  else{
+            filterPrice(card);
+        }
+    }
+    
+    max.addEventListener('change', filter)
+    min.addEventListener('change', filter)
+    check.addEventListener('click', filter)
+}
+
 //Работа с каталог
 function renderCatalog(){
-    
     const cards = document.querySelectorAll('.goods .card');
     const catalogBtn = document.querySelector('.catalog-button');
     const catalog = document.querySelector('.catalog');
@@ -195,7 +226,8 @@ function renderCatalog(){
     const categories = new Set();
     const filter = document.querySelector('.filter');
     const filterTitle = document.querySelector('.filter-title');
-
+   
+    
     cards.forEach(card => {
         categories.add(card.dataset.category);
     })
@@ -207,6 +239,7 @@ function renderCatalog(){
     })
 
     catalogBtn.addEventListener('click', (event)=> {
+        console.log('hello')
         if(catalog.style.display){
             catalog.style.display = '';
         } else{
@@ -220,31 +253,27 @@ function renderCatalog(){
             const li = event.target;
             
             filterTitle.textContent = event.target.textContent;
-
             cards.forEach(card => {
-                
                 if(card.dataset.category === li.textContent){
-                    card.parentNode.style.display = '';
                     card.style.display = '';
+                    card.parentNode.style.display = ''; 
+                    filterCategoria(li, card)
                 } else{
                     card.style.display = 'none';
                     card.parentNode.style.display = 'none';
                 }
+               
+                list.forEach(elem => {
+                    if(elem === event.target){
+                        elem.classList.add('active')
+                    } else{
+                        elem.classList.remove('active')
+                    }
+                });
             })
-            list.forEach(elem => {
-                //elem.classList.add('active')
-                if(elem === event.target){
-                    elem.classList.add('active')
-                } else{
-                    elem.classList.remove('active')
-                }
-            });
         }
-
-        filters();
-    })  
+    })
 }
-//конец
 
 
 getDate().then(data => {
